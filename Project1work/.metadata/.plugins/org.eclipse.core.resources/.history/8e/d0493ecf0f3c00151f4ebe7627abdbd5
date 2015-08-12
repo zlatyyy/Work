@@ -1,0 +1,48 @@
+package Search;
+import static org.junit.Assert.*;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import org.junit.Assert.*;
+import org.apache.http.util.Asserts;
+import org.eclipse.jdt.internal.compiler.ast.AssertStatement;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NotFoundException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+public class SearchTestStep {
+	WebDriver driver;
+	WebDriverWait wait;
+	@Before
+	public void openBr() {
+		System.setProperty("webdriver.chrome.driver",
+				"D:\\SELENIUM\\chromedriver_win32\\chromedriver.exe");
+		driver = new ChromeDriver();
+		driver.get("http://193.178.152.130:8090/steps");
+	}
+	@Test
+	public void editCase() {
+		wait = new WebDriverWait(driver, 500);
+		wait.until(ExpectedConditions.presenceOfElementLocated(By
+				.xpath("//span[.='1 - DO NOT DELETE!']")));
+		WebElement searchField = driver
+				.findElement(By.cssSelector("input.text-input"));
+		searchField.sendKeys("1 - DO NOT DELETE!");
+		WebElement magnifyingGlass = driver
+				.findElement(By.cssSelector("button.search-button"));
+		magnifyingGlass.click();
+		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("span.name-cell-text")));
+		WebElement table = driver.findElement(By.cssSelector("span.name-cell-text"));
+//Now we should verify whether the search word will appear in the test step list view.
+		String content = table.getText();
+		System.out.println(content+ " "+content.equalsIgnoreCase("1 - DO NOT DELETE!"));
+		Asserts ver=new Asserts();
+		ver.assertEquals("1 - DO NOT DELETE!", content);
+}
+}
