@@ -1,14 +1,23 @@
 package testapp;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Point;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.MethodRule;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NotFoundException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -16,6 +25,9 @@ import org.openqa.selenium.remote.server.handler.FindElements;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
+import static java.io.File.separator;
 public class TestCaseEdit {
 	WebDriver driver;
 	WebDriverWait wait;
@@ -76,33 +88,51 @@ public class TestCaseEdit {
 					.getText().equals(storedTextOfTheUsedStep));
 		}
 		for (WebElement element2 : collectionRight) {
-			Assert.assertTrue("The step is not in the right container.",
-					element2.getText().equals(storedTextOfTheUsedStep));
-			System.out.println(element2.getText());
+			Assert.assertTrue(storedTextOfTheUsedStep.contains(element2
+					.getText()));
 		}
 		WebElement rightSelectStep2 = driver.findElement(By.xpath(xpathMove));
 		rightSelectStep2.click();
 		WebElement arrowLeft = driver.findElement(By
 				.cssSelector("button.button.move-left.blue"));
 		arrowLeft.click();
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		// Verify the test step is out of the right component and is in the left
 		// component.
-		/*
-		 * try { for (WebElement el : collectionRight) {
-		 * Assert.assertFalse("The step is in the right container.", el
-		 * .getText().equals(storedTextOfTheUsedStep)); } } catch (Exception e)
-		 * { System.out
-		 * .println("There isn't any test step in the right container"); } //for
-		 * (WebElement elem : collectionLeft) { //Assert. //
-		 * Assert.assertTrue("The step is not in the left container.", elem
-		 * //.getText().equals(storedTextOfTheUsedStep)); //}
-		 * 
-		 * @AfterMethod public void takeScreenShotOnFailure(ITestResult
-		 * testResult) throws IOException { if (testResult.getStatus() ==
-		 * ITestResult.FAILURE) { System.out.println(testResult.getStatus());
-		 * File scrFile =
-		 * ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-		 * FileUtils.copyFile(scrFile, new File("D:\\testScreenShot.jpg")); }
-		 */
+		List<WebElement> collectionLeftBack = driver
+				.findElements(By
+						.xpath("//div[contains(@class,'droppable-wrapper') and contains(@class ,'left-selector-container')]//span[@class='list-item-label']"));
+		List<WebElement> collectionRightBack = driver
+				.findElements(By
+						.xpath("//div[contains(@class,'droppable-wrapper') and contains(@class ,'right-selector-container')]//span[@class='list-item-label']"));
+		if (collectionRight.size() != 0) {
+			for (WebElement el : collectionRightBack) {
+				Assert.assertFalse("The step is in the right container.",
+						storedTextOfTheUsedStep.contains(el.getText()));
+			}
+		}
+		System.out.println(collectionLeftBack
+				.get(collectionLeftBack.size() - 1).getText());
+		Assert.assertTrue(
+				"The step is not in the left container.",
+				storedTextOfTheUsedStep.contains(collectionLeftBack.get(
+						collectionLeftBack.size() - 1).getText()));
 	}
+	/*
+//Code for TestNG
+	@AfterMethod
+	public void takeScreenShotOnFailure(ITestResult testResult)
+			throws IOException {
+		if (testResult.getStatus() == ITestResult.FAILURE) {
+			System.out.println(testResult.getStatus());
+			File scrFile = ((TakesScreenshot) driver)
+					.getScreenshotAs(OutputType.FILE);
+			FileUtils.copyFile(scrFile, new File(
+					"D:\\SystemTesting\\ScreenCase.jpg"));
+					
+		}
+	}
+	*/
+
+
 }
