@@ -3,23 +3,21 @@ package testappFramework;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
 
-public class LabelInTestCase {		
-	public LabelInTestCaseSCRIPT page;
-	@Before
-	public void openBr(){
-		PageFactory.initElements(new FirefoxDriver(), LabelInTestCaseSCRIPT.class);
-		page.openB("http://193.178.152.151:4000/cases");
-	}
+public class LabelInTestCase {
 	@Test
-	public void createTestCase() {
-	page.clickOnButtonNew();
-	}
-	@After
-	public void close (){
+	public void createTestCase() throws Throwable {
+		LabelInTestCaseSCRIPT page = new LabelInTestCaseSCRIPT();
+		page.openB();
+		page.clickOnButtonNew();
+		page.enterName("TestCase1");
+		page.enterType();
+		page.enterLabel("Label1");
+		page.clickOnCreateCaseButton ();
+		page.verifyAddedLabel();
 		page.closeB();
 	}
 }
-
